@@ -7,7 +7,7 @@ const router = Router();
 
 router.post("/resume", isAuth, upload.single("resume"), analyzeResume)
 router.post("/generate-question", isAuth, generateQuestions)
-router.post("submit-answer", isAuth, submitAnswer)
+router.post("/submit-answer", isAuth, submitAnswer)
 router.post("/finish", isAuth, finishInterview)
 
 
