@@ -9,12 +9,16 @@ import {
   FaMicrophoneAlt,
   FaChartLine
 } from "react-icons/fa"
+import { useDispatch, useSelector } from 'react-redux'
+import { setUserData } from '../Redux/userSlice'
 
 function Step1SetUp({ onStart }) {
 
+  const  {userData} = useSelector((state)=>state.user)
+  const dispatch = useDispatch()
   const [role, setRole] = useState("");
-  const [expirience, setExperience] = useState("");
-  const [mode, setMode] = useState("Techical");
+  const [experience, setExperience] = useState("");
+  const [mode, setMode] = useState("Technical");
   const [resumeFile, setResumeFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
@@ -49,6 +53,22 @@ function Step1SetUp({ onStart }) {
     }
   }
 
+  const handleStart = async () => {
+    setLoading(true)
+    try {
+      const result = await axios.post(serverUrl + "/api/interview/generate-question", {role, experience, mode, resumeText, projects, skills }, { withCredentials: true });
+      console.log(result.data);
+      if(userData){
+        dispatch(setUserData({...userData, credits: result.data.creditsLeft} ))
+      }
+      setLoading(false)
+      onStart(result.data)
+    } catch (error) {
+      console.log(error);
+      setLoading(false)
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -56,7 +76,7 @@ function Step1SetUp({ onStart }) {
       transition={{ duration: 0.7 }}
       className='min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4'>
 
-      <div className='w-full max-w-6xl bg-white rounded-3xl shadow-2xl grid md:grid-cols-2 overflow-hidden'>
+      <div className='w-full lg:w-[75%] max-w-6xl bg-white rounded-3xl shadow-2xl grid md:grid-cols-2 overflow-hidden'>
 
         <motion.div
           initial={{ opacity: 0, y: -120 }}
@@ -121,13 +141,13 @@ function Step1SetUp({ onStart }) {
 
             <div className='relative'>
               <FaBriefcase className='absolute top-4 left-4 text-gray-600' />
-              <input type="text" placeholder='Enter your experience' className='w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition' onChange={(e) => setExperience(e.target.value)} value={expirience} />
+              <input type="text" placeholder='Enter your experience' className='w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition' onChange={(e) => setExperience(e.target.value)} value={experience} />
             </div>
 
             <select value={mode}
               onChange={(e) => setMode(e.target.value)}
               className='w-full py-3 px-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition'>
-              <option value="Techical">Techical Interview</option>
+              <option value="Technical">Technical Interview</option>
               <option value="HR">HR Interview</option>
             </select>
 
@@ -192,11 +212,12 @@ function Step1SetUp({ onStart }) {
             )}
 
             <motion.button
-              disabled={!role || !expirience}
+              onClick={handleStart}
+              disabled={!role || !experience || loading}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
               className='w-full disabled:bg-gray-600 bg-green-600 hover:bg-green-700 text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md'>
-              Start Interview
+              {loading ? "Starting..." : "Start Interview"}
             </motion.button>
 
           </div>

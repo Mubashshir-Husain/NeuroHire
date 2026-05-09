@@ -58,7 +58,7 @@ export const analyzeResume = async (req, res) => {
         ];
 
         const aiResponse = await askAi(messages)
-        console.log("aiResponse is => ", aiResponse);
+        // console.log("aiResponse is => ", aiResponse);
 
         const parse = JSON.parse(aiResponse);
 
@@ -74,7 +74,7 @@ export const analyzeResume = async (req, res) => {
             resumeText
         });
     } catch (error) {
-        console.log(error);
+        console.log("Error in analyzeResume => ", error);
 
         if (req.file && fs.existsSync(req.file.path)) {  // file ko delete krenge agar pehle delete nhi hui ya analize me error aaya to pehle detele nhi hogi. isliye yha karwa rhe hai
             fs.unlinkSync(req.file.path);
@@ -87,7 +87,7 @@ export const analyzeResume = async (req, res) => {
 
 export const generateQuestions = async (req, res) => {
     try {
-        const { role, experience, mode, resumeText, projects, skills } = req.body
+        let { role, experience, mode, resumeText, projects, skills } = req.body
 
         role = role?.trim();
         experience = experience?.trim();
@@ -192,11 +192,11 @@ Make questions based on the candidate’s role, experience, interviewMode, proje
             questions: questionsArray.map((q, index) => ({
                 question: q,
                 difficulty: ["easy", "medium", "medium", "medium", "hard"][index],
-                timeLimit: [45, 90, 90, 90, 120][index],
+                timeLimit: [60, 90, 90, 90, 120][index],
             }))
         });
 
-        req.json({
+        res.json({
             interviewId: interview._id,
             creditsLeft: user.credits,
             userName: user.name,
@@ -204,7 +204,7 @@ Make questions based on the candidate’s role, experience, interviewMode, proje
         })
 
     } catch (error) {
-        console.log(error);
+        console.log("Error in generateQuestions:", error);
         return res.status(500).json({ message: `Failed to create interview ${error.message}` })
     }
 }
@@ -320,9 +320,9 @@ Answer: ${answer}
 
         return res.status(200).json({
             feedback: parsed.feedback
-        }); 
+        });
     } catch (error) {
-        console.log(error);
+        console.log("Error in submitAnswer:", error);
         return res.status(500).json({ message: `Submit Answer Failed ${error.message}` })
     }
 }
@@ -330,8 +330,54 @@ Answer: ${answer}
 
 export const finishInterview = async (req, res) => {
     try {
-         
+        const { interviewId } = req.body
+
+        const interview = await Interview.findById(interviewId)
+        if (!interview) {
+            return res.status(404).json({ message: "Failed to find interview" })
+        }
+
+        const totalQuestions = interview.questions.length;
+
+        let totalScore = 0;
+        let totalConfidence = 0;
+        let totalCommunication = 0;
+        let totalCorrectness = 0;
+
+        interview.questions.forEach((q) => {
+            totalScore += q.score || 0;
+            totalConfidence += q.confidence || 0;
+            totalCommunication += q.communication || 0;
+            totalCorrectness += q.correctness || 0;
+        })
+
+        const finalScore = totalQuestions ? totalScore / totalQuestions : 0;
+        const avgConfidence = totalQuestions ? totalConfidence / totalQuestions : 0;
+        const avgCommunication = totalQuestions ? totalCommunication / totalQuestions : 0;
+        const avgCorrectness = totalQuestions ? totalCorrectness / totalQuestions : 0;
+
+        interview.finalScore = finalScore;
+        interview.status = "completed";
+
+        await interview.save()
+
+        return res.status(200).json({
+            finalScore: Number(finalScore.toFixed(1)),
+            confidence: Number(avgConfidence.toFixed(1)),
+            communication: Number(avgCommunication.toFixed(1)),
+            correctness: Number(avgCorrectness.toFixed(1)),
+            questionWiseScore: interview.questions.map((q) => ({
+                question: q.question,
+                score: q.score || 0,
+                feedback: q.feedback || "",
+                confidence: q.confidence || 0,
+                communication: q.communication || 0,
+                correctness: q.correctness || 0
+            }))
+        });
+
     } catch (error) {
-        
+        console.log("Error in finishInterview",error);
+        return res.status(500).json({ message: `Failed to finish interview ${error.message}` })
     }
 }

@@ -64,7 +64,7 @@ function Home() {
                             </span>
                         </motion.h1>
                         <motion.p
-                            initial={{ opacity: 0, x: 250 }}
+                            initial={{ opacity: 0, x: 150 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 1.3 }}
                             className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg">
@@ -213,7 +213,7 @@ function Home() {
 
                     </div>
 
-                    <div className="mb-32">
+                    <div className="mb-12">
                         <motion.h2
                             initial={{ opacity: 0, y: 70 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -263,7 +263,7 @@ function Home() {
                                                 <img
                                                     src={mode.img}
                                                     alt={mode.title}
-                                                    className="w-28 h-28object-contain"
+                                                    className="w-28 h-28 object-contain"
                                                 />
                                             </div>
                                         </div>
