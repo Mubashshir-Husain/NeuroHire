@@ -261,7 +261,7 @@ Evaluate naturally and fairly, like a real person would.
 
 Score the answer in these areas (0 to 10):
 
-1. Confidence – Does the answer sound clear, confident, and well-presented?
+1. Confidence – Does the candidate show confidence in their answer?
 2. Communication – Is the language simple, clear, and easy to understand?
 3. Correctness – Is the answer accurate, relevant, and complete?
 
@@ -277,7 +277,7 @@ finalScore = average of confidence, communication, and correctness (rounded to n
 
 Feedback Rules:
 - Write natural human feedback.
-- 10 to 15 words only.
+- 25 to 30 words only.
 - Sound like real interview feedback.
 - Can suggest improvement if needed.
 - Do NOT repeat the question.
@@ -287,11 +287,11 @@ Feedback Rules:
 Return ONLY valid JSON in this format:
 
 {
-  "confidence": number,
   "communication": number,
+  "confidence": number,
   "correctness": number,
   "finalScore": number,
-  "feedback": "short human feedback"
+  "feedback": "15-30 word human feedback"
 }
 `
             }
@@ -307,10 +307,13 @@ Answer: ${answer}
 
 
         const aiResponse = await askAi(messages)
+
+        console.log("AI RESPONSE At 311 line =>", aiResponse)
+
         const parsed = JSON.parse(aiResponse)
 
         question.answer = answer;
-        question.comfidence = parsed.confidence;
+        question.confidence = parsed.confidence;
         question.communication = parsed.communication;
         question.correctness = parsed.correctness;
         question.score = parsed.finalScore;
@@ -345,10 +348,10 @@ export const finishInterview = async (req, res) => {
         let totalCorrectness = 0;
 
         interview.questions.forEach((q) => {
-            totalScore += q.score || 0;
-            totalConfidence += q.confidence || 0;
-            totalCommunication += q.communication || 0;
-            totalCorrectness += q.correctness || 0;
+            totalScore += (q.score) || 0;
+            totalConfidence += (q.confidence) || 0;
+            totalCommunication += (q.communication) || 0;
+            totalCorrectness += (q.correctness) || 0;
         })
 
         const finalScore = totalQuestions ? totalScore / totalQuestions : 0;
@@ -377,9 +380,61 @@ export const finishInterview = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("Error in finishInterview",error);
+        console.log("Error in finishInterview", error);
         return res.status(500).json({ message: `Failed to finish interview ${error.message}` })
     }
 }
 
 
+
+export const getMyInterviews = async (req, res) => {
+    try {
+        const interviews = await Interview.find({ userId: req.userId })
+            .sort({ createdAt: -1 })
+            .select("role experience mode finalScore status createdAt");
+
+        return res.status(200).json(interviews);
+
+    } catch (error) {
+        console.log("Error in getMyInterviews", error);
+        return res.status(500).json({ message: `Failed to get currentUser interviews ${error.message}` })
+    }
+}
+
+
+export const getInterviewReport = async (req, res) => {
+    try {
+        const interview = await Interview.findById(req.params.id)
+        if (!interview) {
+            return res.status(404).json({ message: "Interview not found" })
+        }
+
+        const totalQuestions = interview.questions.length;
+
+        let totalConfidence = 0;
+        let totalCommunication = 0;
+        let totalCorrectness = 0;
+
+        interview.questions.forEach((q) => {
+            totalConfidence += (q.confidence) || 0;
+            totalCommunication += (q.communication) || 0;
+            totalCorrectness += (q.correctness) || 0;
+        })
+
+        const avgConfidence = totalQuestions ? totalConfidence / totalQuestions : 0;
+        const avgCommunication = totalQuestions ? totalCommunication / totalQuestions : 0;
+        const avgCorrectness = totalQuestions ? totalCorrectness / totalQuestions : 0;
+
+        return res.json({
+            finalScore: interview.finalScore,
+            confidence: Number(avgConfidence.toFixed(1)),
+            communication: Number(avgCommunication.toFixed(1)),
+            correctness: Number(avgCorrectness.toFixed(1)),
+            questionWiseScore: interview.questions
+        })
+
+    } catch (error) {
+        console.log("Error in getInterviewReport", error);
+        return res.status(500).json({ message: `Failed to get interview report ${error.message}` })
+    }
+}

@@ -11,7 +11,7 @@ const questionsSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    comfidence: {
+    confidence: {
         type: Number,
         default: 0,
     },
