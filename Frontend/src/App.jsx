@@ -39,7 +39,7 @@ function App() {
       <Route path='/interview' element={<InterviewPage />} />
       <Route path='/history' element={<InterviewHistory />} />
       <Route path='/pricing' element={<Pricing />} />
-      <Route path='/report' element={<InterviewReports />} />
+      <Route path='/report/:id' element={<InterviewReports />} />
     </Routes>
     </BrowserRouter>
   )

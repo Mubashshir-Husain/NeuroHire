@@ -68,7 +68,7 @@ function NavBar() {
                 <p className='text-sm text-gray-600 mb-4'>Need more credits?</p>
                 <button
                   onClick={() => navigate('/pricing')}
-                  className='w-full bg-black text-white py-2 rounded-lg text-sm'>Buy more Credits</button>
+                  className='w-full bg-black text-white py-2 rounded-lg text-sm cursor-pointer'>Buy more Credits</button>
               </div>
             )}
 
