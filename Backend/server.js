@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser'
 import autheRouter from './routes/auth.route.js'
 import userRouter from './routes/user.route.js'
 import interviewRouter from './routes/interview.route.js'
+import paymentRouter from './routes/payment.route.js'
 dotenv.config()
 
 const app = express()
@@ -24,6 +25,7 @@ connectDb()
 app.use("/api/auth", autheRouter)
 app.use("/api/user", userRouter)
 app.use("/api/interview", interviewRouter)
+app.use("/api/payment", paymentRouter)
 
 app.get('/', (req, res) => {
     res.json({ message: "Server is running..." })
