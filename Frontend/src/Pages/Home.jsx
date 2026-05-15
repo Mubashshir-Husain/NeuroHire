@@ -107,7 +107,7 @@ function Home() {
                     </div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: -380 }}
+                        initial={{ opacity: 0, x: -80 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 1.5 }}
                         className="flex flex-col md:flex-row justify-center items-center gap-10 mb-28">

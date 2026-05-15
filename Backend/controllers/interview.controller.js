@@ -325,7 +325,7 @@ Answer: ${answer}
 
         const aiResponse = await askAi(messages)
 
-        console.log("AI RESPONSE At 311 line =>", aiResponse)
+        // console.log("AI RESPONSE At 311 line =>", aiResponse)
 
         const parsed = JSON.parse(aiResponse)
 
@@ -443,7 +443,8 @@ export const getInterviewReport = async (req, res) => {
         const avgCorrectness = totalQuestions ? totalCorrectness / totalQuestions : 0;
 
         return res.json({
-            finalScore: interview.finalScore,
+            // finalScore: interview.finalScore,
+            finalScore: Number(interview.finalScore.toFixed(1)),
             confidence: Number(avgConfidence.toFixed(1)),
             communication: Number(avgCommunication.toFixed(1)),
             correctness: Number(avgCorrectness.toFixed(1)),
