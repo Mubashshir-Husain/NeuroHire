@@ -12,7 +12,7 @@ dotenv.config()
 const app = express()
 
 app.use(cors({
-    origin: "https://neurohire-frontend1.onrender.com",
+    origin: "https://neurohire-j0es.onrender.com/",
     credentials: true
 }))
 

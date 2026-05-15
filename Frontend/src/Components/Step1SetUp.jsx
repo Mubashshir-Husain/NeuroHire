@@ -82,15 +82,14 @@ function Step1SetUp({ onStart }) {
           initial={{ opacity: 0, y: -120 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2 }}
-          className='relative bg-gradient-to-br from-green-50 to-green-100 p-12 flex flex-col justify-center'>
+          className='relative bg-gradient-to-br from-green-50 to-green-100 p-10 flex flex-col justify-center'>
 
           <h2 className='text-4xl font-bold text-gray-800 mb-6'>
-            Start Your AI Interview 
+            Start AI Interview 
           </h2>
 
           <p className='mb-10 text-gray-600'>
             Prectice real interview scenarios powered by NeuroHire.
-            Improve communication, technical skills and confidence.
           </p>
 
           <div className='space-y-5'>
@@ -130,7 +129,7 @@ function Step1SetUp({ onStart }) {
           transition={{ duration: 1.2 }}
           className='p-12 bg-white'>
           <h2 className='mb-8 text-3xl font-bold text-gray-800'>
-            Interview Setup
+            Interview Setup Here
           </h2>
 
           <div className='space-y-6'>
@@ -161,7 +160,7 @@ function Step1SetUp({ onStart }) {
                   className='hidden'
                   onChange={(e) => setResumeFile(e.target.files[0])} />
                 <p className='text-gray-600 font-medium'>
-                  {resumeFile ? resumeFile.name : "Click to upload resume(Optional)"}
+                  {resumeFile ? resumeFile.name : "Upload resume in pdf(Optional)"}
                 </p>
 
                 {resumeFile && (
