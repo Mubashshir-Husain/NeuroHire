@@ -134,10 +134,10 @@ You are a real human interviewer conducting a professional interview.
 
 Speak in simple, natural English as if you are directly talking to the candidate.
 
-Generate exactly 5 interview questions.
+Generate exactly 7 interview questions.
 
 Strict Rules:
-- Each question must contain between 15 and 25 words.
+- Each question must contain between 10 and 35 words.
 - Each question must be a single complete sentence.
 - Do NOT number them.
 - Do NOT add explanations.
@@ -147,13 +147,30 @@ Strict Rules:
 - Questions must feel practical and realistic.
 
 Difficulty progression:
-Question 1 → easy  
-Question 2 → medium  
-Question 3 → medium  
-Question 4 → medium  
-Question 5 → hard  
+Question 1 → easy
+Question 2 → easy
+Question 3 → medium
+Question 4 → medium
+Question 5 → medium
+Question 6 → hard
+Question 7 → hard
 
-Make questions based on the candidate’s role, experience, interviewMode, projects, skills, and resume details.
+Make questions based on the candidate’s role, projects, skills, programming languages, technologies, and resume details.
+
+IMPORTANT TECHNICAL INTERVIEW RULES:
+If interviewMode is "technical":
+- Ask ONLY technical questions.
+- Focus mainly on the candidate's listed skills, technologies, frameworks, tools, databases, and programming languages.
+- Ask concept-based, problem-solving, debugging, optimization, API, database, authentication, state management, project architecture, and coding-related questions.
+- Questions should test practical technical knowledge.
+- Prefer questions related to projects mentioned in the resume.
+- Do NOT ask HR, behavioral, personality, teamwork, leadership, strengths, weaknesses, or career-goal questions.
+- Do NOT ask generic experience-based questions unless directly connected to technical implementation.
+
+IMPORTANT HR INTERVIEW RULES:
+If interviewMode is "HR":
+- Ask questions about communication, teamwork, challenges, career goals, work experience, project responsibilities, strengths, weaknesses, and professional situations.
+- Avoid deep technical concept questions.
 `
             }
             ,
@@ -173,7 +190,7 @@ Make questions based on the candidate’s role, experience, interviewMode, proje
             .split("\n")
             .map(q => q.trim())
             .filter(q => q.length > 0)
-            .slice(0, 5);
+            .slice(0, 7);
 
         if (questionsArray.length === 0) {
             return res.status(400).json({ message: "AI Failed to generate questions." });
@@ -191,8 +208,8 @@ Make questions based on the candidate’s role, experience, interviewMode, proje
             resumeText: safeResume,
             questions: questionsArray.map((q, index) => ({
                 question: q,
-                difficulty: ["easy", "medium", "medium", "medium", "hard"][index],
-                timeLimit: [60, 90, 90, 90, 120][index],
+                difficulty: ["easy", "easy", "medium", "medium", "medium", "hard", "hard"][index],
+                timeLimit: [60, 60, 90, 90, 90, 120, 120][index],
             }))
         });
 
@@ -262,12 +279,12 @@ Evaluate naturally and fairly, like a real person would.
 Score the answer in these areas (0 to 10):
 
 1. Confidence – Does the candidate show confidence in their answer?
-2. Communication – Is the language simple, clear, and easy to understand?
+2. Communication – Is the language clear, and easy to understand?
 3. Correctness – Is the answer accurate, relevant, and complete?
 
 Rules:
 - Be realistic and unbiased.
-- Do not give random high scores.
+- Do not give random scores.
 - If the answer is weak, score low.
 - If the answer is strong and detailed, score high.
 - Consider clarity, structure, and relevance.
@@ -277,7 +294,7 @@ finalScore = average of confidence, communication, and correctness (rounded to n
 
 Feedback Rules:
 - Write natural human feedback.
-- 25 to 30 words only.
+- 15 to 60 words only.
 - Sound like real interview feedback.
 - Can suggest improvement if needed.
 - Do NOT repeat the question.
@@ -291,7 +308,7 @@ Return ONLY valid JSON in this format:
   "confidence": number,
   "correctness": number,
   "finalScore": number,
-  "feedback": "15-30 word human feedback"
+  "feedback": "15-60 word human feedback"
 }
 `
             }
